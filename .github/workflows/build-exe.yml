@@ -23,6 +23,9 @@ jobs:
         run: |
           pip install pyinstaller flask requests
 
+      - name: GitHub Runner IP Adresini Kontrol Et
+        run: curl https://ifconfig.me
+
       - name: PyInstaller ile EXE Üret
         run: pyinstaller --onefile --name=LinksAPI links.py
 
