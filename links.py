@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Hedef API'nin URL'si
-API_ENDPOINT = "http://spicaws.assessment.com.tr/links/"  # HTTP olarak bırakıldı
+API_ENDPOINT = "http://spicaws.assessment.com.tr/links"
 
 @app.route('/links', methods=['POST'])
 def convert_and_send():
@@ -23,16 +23,16 @@ def convert_and_send():
         if not auth_token:
             return jsonify({"message": "Yetkilendirme hatası: Token eksik"}), 401
 
-        # JSON'u multipart/form-data'ya dönüştür
+        # JSON'u multipart/form-data'ya dönüştür (Postman'daki format ile uyumlu)
         form_data = {
             "firstName": (None, data.get("firstName")),
             "lastName": (None, data.get("lastName")),
             "email": (None, data.get("email")),
-            "userID": (None, data.get("userID")),
-            "folderID": (None, data.get("folderID")),
-            "productID": (None, data.get("productID")),
+            "userID": (None, str(data.get("userID"))),
+            "folderID": (None, str(data.get("folderID"))),
+            "productID": (None, str(data.get("productID"))),
             "language": (None, data.get("language")),
-            "TCKN": (None, data.get("TCKN"))
+            "TCKN": (None, str(data.get("TCKN")))
         }
 
         # Header'ı Hedef API'ye ekleyelim
@@ -40,14 +40,13 @@ def convert_and_send():
             "X-Auth-Token": auth_token
         }
 
-        # Log ekleyelim (GitHub Actions içinde neler gönderildiğini görmek için)
+        # Log ekleyelim (Gönderilen veriyi görmek için)
         print(f"Bağlanmaya çalışılan URL: {API_ENDPOINT}")
         print(f"Gönderilen Header'lar: {headers}")
         print(f"Gönderilen Form Data: {form_data}")
 
-        # Hedef API'ye `multipart/form-data` isteği gönder (timeout artırıldı, SSL doğrulama kapatıldı, proxy sıfırlandı)
-        proxies = {"http": None, "https": None}
-        response = requests.post(API_ENDPOINT, files=form_data, headers=headers, timeout=15, verify=False, proxies=proxies)
+        # Hedef API'ye `multipart/form-data` isteği gönder
+        response = requests.post(API_ENDPOINT, files=form_data, headers=headers, timeout=15, verify=False)
 
         # Yanıtı döndür
         return jsonify(response.json()), response.status_code
