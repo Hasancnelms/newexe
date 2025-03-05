@@ -25,16 +25,15 @@ def convert_and_send():
 
         # JSON'u multipart/form-data'ya dönüştür (Doğru veri tipleriyle)
         form_data = {
-            "firstName": (None, data.get("firstName")),
-            "lastName": (None, data.get("lastName")),
-            "email": (None, data.get("email")),
-            "TCKN": (None, data.get("TCKN")),
-            "userID": (None, int(data.get("userID"))),      # ✅ `int` formatına çevrildi
-            "folderID": (None, int(data.get("folderID"))),  # ✅ `int` formatına çevrildi
-            "productID": (None, int(data.get("productID"))),# ✅ `int` formatına çevrildi
-            "language": (None, data.get("language"))
+            "firstName": (None, str(data.get("firstName"))),
+            "lastName": (None, str(data.get("lastName"))),
+            "email": (None, str(data.get("email"))),
+            "TCKN": (None, str(data.get("TCKN"))),
+            "userID": (None, int(data.get("userID"))),
+            "folderID": (None, int(data.get("folderID"))),
+            "productID": (None, int(data.get("productID"))),
+            "language": (None, str(data.get("language")))
         }
-
 
         # Header'ı Hedef API'ye ekleyelim
         headers = {
@@ -49,9 +48,17 @@ def convert_and_send():
         # Hedef API'ye `multipart/form-data` isteği gönder
         response = requests.post(API_ENDPOINT, files=form_data, headers=headers, timeout=15, verify=False)
 
-        # API Yanıtını Logla
+        # 🚀 API Dönüşünü Daha Fazla Logla
         print(f"API Yanıt Kodu: {response.status_code}")
         print(f"API Yanıtı: {response.text}")
+
+        # Eğer API hata kodu döndürüyorsa içeriğini detaylı gösterelim
+        if response.status_code != 200:
+            return jsonify({
+                "message": "API isteği başarısız oldu!",
+                "status_code": response.status_code,
+                "response_text": response.text
+            }), response.status_code
 
         # Yanıtı döndür
         return jsonify(response.json()), response.status_code
