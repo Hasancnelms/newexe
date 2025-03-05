@@ -48,7 +48,7 @@ def convert_and_send():
         # Hedef API'ye `multipart/form-data` isteği gönder
         response = requests.post(API_ENDPOINT, files=form_data, headers=headers, timeout=15, verify=False)
 
-        # 🚀 API Dönüşünü Daha Fazla Logla
+        # 🚀 API Yanıtını Daha Fazla Logla
         print(f"API Yanıt Kodu: {response.status_code}")
         print(f"API Yanıtı: {response.text}")
 
@@ -57,21 +57,25 @@ def convert_and_send():
             return jsonify({
                 "message": "API isteği başarısız oldu!",
                 "status_code": response.status_code,
-                "response_text": response.text
+                "response_text": response.text  # 🚀 API’nin tam hatasını logla
             }), response.status_code
 
         # Yanıtı döndür
         return jsonify(response.json()), response.status_code
 
     except requests.exceptions.ConnectionError as conn_err:
+        print(f"Bağlantı hatası: {str(conn_err)}")
         return jsonify({
             "message": "Bağlantı hatası oluştu",
             "error": str(conn_err),
             "traceback": traceback.format_exc()
         }), 500
     except requests.exceptions.Timeout:
+        print("Hata: API yanıt vermedi!")
         return jsonify({"message": "Hata: API yanıt vermedi!"}), 500
     except Exception as e:
+        print(f"Genel Hata: {str(e)}")
+        print(traceback.format_exc())
         return jsonify({
             "message": "Hata oluştu",
             "error": str(e),
