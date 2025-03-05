@@ -23,16 +23,16 @@ def convert_and_send():
         if not auth_token:
             return jsonify({"message": "Yetkilendirme hatası: Token eksik"}), 401
 
-        # JSON'u multipart/form-data'ya dönüştür (Postman'daki format ile uyumlu)
+        # JSON'u multipart/form-data'ya dönüştür (Doğru veri tipleriyle)
         form_data = {
             "firstName": (None, data.get("firstName")),
             "lastName": (None, data.get("lastName")),
             "email": (None, data.get("email")),
-            "userID": (None, str(data.get("userID"))),
-            "folderID": (None, str(data.get("folderID"))),
-            "productID": (None, str(data.get("productID"))),
-            "language": (None, data.get("language")),
-            "TCKN": (None, str(data.get("TCKN")))
+            "TCKN": (None, data.get("TCKN")),
+            "userID": (None, int(data.get("userID"))),      # ✅ `int` formatına çevrildi
+            "folderID": (None, int(data.get("folderID"))),  # ✅ `int` formatına çevrildi
+            "productID": (None, int(data.get("productID"))),# ✅ `int` formatına çevrildi
+            "language": (None, data.get("language"))
         }
 
         # Header'ı Hedef API'ye ekleyelim
