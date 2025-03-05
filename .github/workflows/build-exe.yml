@@ -34,10 +34,11 @@ jobs:
 
       - name: Versiyon Tag'ı Oluştur
         id: tag_version
+        shell: pwsh  # PowerShell kullan
         run: |
           git fetch --tags
-          TAG="v1.0.$(date +%s)"
-          echo "TAG=$TAG" >> $GITHUB_ENV
+          $TAG="v1.0." + [int][double]::Parse((Get-Date -UFormat %s))
+          echo "TAG=$TAG" | Out-File -FilePath $env:GITHUB_ENV -Append
           git tag $TAG
           git push origin $TAG
 
