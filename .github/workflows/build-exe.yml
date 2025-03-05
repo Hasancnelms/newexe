@@ -1,0 +1,39 @@
+name: Build Flask API to EXE
+
+on: 
+  push:
+    branches:
+      - main  # "main" branch'e push yapıldığında çalışır
+
+jobs:
+  build:
+    runs-on: windows-latest  # Windows üzerinde çalıştıracağız
+
+    steps:
+      - name: Depoyu Klonla
+        uses: actions/checkout@v3
+
+      - name: Python Kurulumu
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'  # Kullanmak istediğin Python versiyonu
+
+      - name: Gerekli Kütüphaneleri Kur
+        run: |
+          pip install pyinstaller flask requests
+
+      - name: PyInstaller ile EXE Üret
+        run: pyinstaller --onefile --name=LinksAPI app.py
+
+      - name: Çıktıyı Upload Et (GitHub Artifacts)
+        uses: actions/upload-artifact@v3
+        with:
+          name: LinksAPI-Executable
+          path: dist/LinksAPI.exe
+
+      - name: GitHub Releases'e Yükle
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/LinksAPI.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
