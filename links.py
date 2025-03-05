@@ -9,7 +9,7 @@ app = Flask(__name__)
 API_ENDPOINT = "http://spicaws.assessment.com.tr/links"
 
 
-@app.route('/links', methods=['POST'])
+@app.route('/links/', methods=['POST'])
 def convert_and_send():
     try:
         # Gelen JSON verisini al
