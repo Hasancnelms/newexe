@@ -6,10 +6,9 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Hedef API'nin URL'si
-API_ENDPOINT = "http://spicaws.assessment.com.tr/links"
+API_ENDPOINT = "http://spicaws.assessment.com.tr/links"  # HTTP olarak bırakıldı
 
-
-@app.route('/links/', methods=['POST'])
+@app.route('/links', methods=['POST'])
 def convert_and_send():
     try:
         # Gelen JSON verisini al
@@ -41,8 +40,14 @@ def convert_and_send():
             "X-Auth-Token": auth_token
         }
 
-        # Hedef API'ye `multipart/form-data` isteği gönder
-        response = requests.post(API_ENDPOINT, files=form_data, headers=headers)
+        # Log ekleyelim (GitHub Actions içinde neler gönderildiğini görmek için)
+        print(f"Bağlanmaya çalışılan URL: {API_ENDPOINT}")
+        print(f"Gönderilen Header'lar: {headers}")
+        print(f"Gönderilen Form Data: {form_data}")
+
+        # Hedef API'ye `multipart/form-data` isteği gönder (timeout artırıldı, SSL doğrulama kapatıldı, proxy sıfırlandı)
+        proxies = {"http": None, "https": None}
+        response = requests.post(API_ENDPOINT, files=form_data, headers=headers, timeout=15, verify=False, proxies=proxies)
 
         # Yanıtı döndür
         return jsonify(response.json()), response.status_code
@@ -62,9 +67,8 @@ def convert_and_send():
             "traceback": traceback.format_exc()
         }), 500
 
-
 if __name__ == '__main__':
-    port = 5001
+    port = 5001  # 5000 yerine 5001 kullanılıyor, ÇAKIŞMA OLMAYACAK!
     print(f"Flask API {port} portunda başlatılıyor...")
     print("Eğer erişim sorunu yaşarsanız, güvenlik duvarı ve port izinlerini kontrol edin.")
     app.run(host="0.0.0.0", port=port)
