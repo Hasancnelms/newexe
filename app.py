@@ -41,11 +41,8 @@ def convert_and_send():
             "X-Auth-Token": auth_token
         }
 
-        # Bağlantıyı test etmek için log ekleyelim
-        print(f"Bağlantı deneniyor: {API_ENDPOINT}")
-
         # Hedef API'ye `multipart/form-data` isteği gönder
-        response = requests.post(API_ENDPOINT, files=form_data, headers=headers, verify=False, timeout=10)
+        response = requests.post(API_ENDPOINT, files=form_data, headers=headers)
 
         # Yanıtı döndür
         return jsonify(response.json()), response.status_code
@@ -70,4 +67,4 @@ if __name__ == '__main__':
     port = 5001
     print(f"Flask API {port} portunda başlatılıyor...")
     print("Eğer erişim sorunu yaşarsanız, güvenlik duvarı ve port izinlerini kontrol edin.")
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port)
