@@ -35,6 +35,7 @@ def convert_and_send():
             "language": (None, data.get("language"))
         }
 
+
         # Header'ı Hedef API'ye ekleyelim
         headers = {
             "X-Auth-Token": auth_token
@@ -47,6 +48,10 @@ def convert_and_send():
 
         # Hedef API'ye `multipart/form-data` isteği gönder
         response = requests.post(API_ENDPOINT, files=form_data, headers=headers, timeout=15, verify=False)
+
+        # API Yanıtını Logla
+        print(f"API Yanıt Kodu: {response.status_code}")
+        print(f"API Yanıtı: {response.text}")
 
         # Yanıtı döndür
         return jsonify(response.json()), response.status_code
