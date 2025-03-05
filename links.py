@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Hedef API'nin URL'si
-API_ENDPOINT = "http://spicaws.assessment.com.tr/links"  # HTTP olarak bırakıldı
+API_ENDPOINT = "http://spicaws.assessment.com.tr/links/"  # HTTP olarak bırakıldı
 
 @app.route('/links', methods=['POST'])
 def convert_and_send():
