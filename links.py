@@ -17,8 +17,8 @@ def convert_and_send():
         if not data:
             return jsonify({"message": "Eksik JSON verisi"}), 400
 
-        # "X-Auth-Token" değerini al
-        auth_token = request.headers.get("X-Auth-Token")
+        # JSON içinden token bilgisini al
+        auth_token = data.get("token")
 
         if not auth_token:
             return jsonify({"message": "Yetkilendirme hatası: Token eksik"}), 401
